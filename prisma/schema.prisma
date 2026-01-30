@@ -5,3 +5,29 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+enum EventStatus {
+  pending
+  processed
+  failed
+}
+
+model WebhookEvent {
+  id         String
+  provider   String
+  eventType  String
+
+  status     EventStatus @default(pending)
+
+  payload    Json
+
+  attempts   Int         @default(0)
+  lastError  String?
+
+  receivedAt DateTime    @default(now())
+  processedAt DateTime?
+
+  @@id([provider, id])
+  @@index([status])
+  @@index([receivedAt])
+}
