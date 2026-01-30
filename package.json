@@ -1,10 +1,10 @@
 {
   "name": "webhook-gateway",
-  "module": "index.ts",
+  "module": "src/server.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun --watch index.ts"
+    "dev": "bun --watch src/server.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.13",
