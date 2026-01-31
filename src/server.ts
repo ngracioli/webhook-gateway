@@ -1,8 +1,9 @@
 import { Elysia } from 'elysia';
+import { webhookController } from '@/webhooks/webhook.controller';
 
 const app = new Elysia();
 
-app.get('/health', () => 'ok');
+app.use(webhookController());
 
 app.listen(3000);
 
