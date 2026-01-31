@@ -35,4 +35,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # GitHub configuration files
 .github/
+
+# Prisma
+prisma/*
+!prisma/schema.prisma
 /generated/prisma
