@@ -4,8 +4,7 @@ import { validateSignature } from '@/webhooks/validators/signature.validator';
 type WebhookInput = {
   provider: string;
   rawBody: string;
-  headers: Record<string, string | undefined>;
-  payload: unknown;
+  signature?: string | null;
 };
 
 export class WebhookService {
@@ -15,21 +14,28 @@ export class WebhookService {
     const isValid = validateSignature({
       provider: input.provider,
       rawBody: input.rawBody,
-      headers: input.headers,
+      signature: input.signature ?? null,
     });
 
     if (!isValid) {
       throw new Error('Invalid webhook signature');
     }
 
-    const eventId = this.extractEventId(input.payload);
-    const eventType = this.extractEventType(input.payload);
+    let payload: unknown;
+    try {
+      payload = JSON.parse(input.rawBody);
+    } catch (err) {
+      throw new Error('Invalid JSON payload');
+    }
+
+    const eventId = this.extractEventId(payload);
+    const eventType = this.extractEventType(payload);
 
     return this.eventService.ingestEvent({
       provider: input.provider,
       id: eventId,
       eventType,
-      payload: input.payload,
+      payload,
     });
   }
 

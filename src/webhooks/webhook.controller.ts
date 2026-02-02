@@ -12,15 +12,15 @@ export function webhookController() {
     '/:provider',
     async ({ params, request, headers }) => {
       const rawBody = await request.text();
-      console.log('Received webhook:', { provider: params.provider, rawBody });
-      const payload = JSON.parse(rawBody);
+      const signature =
+        (headers as Record<string, string | undefined>)['x-signature'] ??
+        (headers as Record<string, string | undefined>)['x-webhook-signature'];
 
       try {
         const result = await webhookService.handleWebhook({
           provider: params.provider,
           rawBody,
-          headers: headers as Record<string, string | undefined>,
-          payload,
+          signature,
         });
         return {
           ok: true,
@@ -28,7 +28,7 @@ export function webhookController() {
         };
       } catch (error) {
         if (error instanceof Error) {
-          if (error.message.includes('signature')) {
+          if (error.message.toLowerCase().includes('signature')) {
             return new Response('Invalid signature', { status: 401 });
           }
 

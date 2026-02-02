@@ -10,12 +10,22 @@ const payload = {
 };
 
 const rawBody = JSON.stringify(payload);
-const signature = crypto
+const signatureHex = crypto
   .createHmac('sha256', SECRET)
   .update(rawBody)
   .digest('hex');
+const signature = `sha256=${signatureHex}`;
 
-async function send() {
+async function sendHttp() {
+  console.log('Sending webhook with details:', {
+    url,
+    payload,
+    rawBody,
+    headers: {
+      'Content-Type': 'application/json',
+      'x-signature': signature,
+    },
+  });
   const res = await fetch(url, {
     method: 'POST',
     headers: {
@@ -39,5 +49,5 @@ async function send() {
 }
 
 (async () => {
-  await send();
+  await sendHttp();
 })();

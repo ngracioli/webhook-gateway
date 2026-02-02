@@ -3,36 +3,41 @@ import crypto from 'node:crypto';
 type ValidateSignatureInput = {
   provider: string;
   rawBody: string;
-  headers: Record<string, string | undefined>;
+  signature?: string | null;
 };
 
 export function validateSignature(input: ValidateSignatureInput): boolean {
   const secret = getWebhookSecret(input.provider);
-  const signatureHeader =
-    input.headers['x-signature'] ?? input.headers['x-webhook-signature'];
+  const signature = input.signature ?? null;
 
-  console.log('Validating signature:', {
+  console.log('Validating signature (require sha256= prefix):', {
     provider: input.provider,
-    signatureHeader,
+    signatureProvided: !!signature,
     secretExists: !!secret,
   });
 
-  if (!signatureHeader || !secret) {
-    return false;
-  }
+  if (!signature || !secret) return false;
+
+  // Require `sha256=` prefix strictly
+  if (!signature.startsWith('sha256=')) return false;
+
+  const sig = signature.slice('sha256='.length);
 
   const expectedSignature = crypto
     .createHmac('sha256', secret)
     .update(input.rawBody)
     .digest('hex');
 
-  if (expectedSignature.length !== signatureHeader.length) {
+  if (expectedSignature.length !== sig.length) return false;
+
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(expectedSignature, 'hex'),
+      Buffer.from(sig, 'hex')
+    );
+  } catch {
     return false;
   }
-  return crypto.timingSafeEqual(
-    Buffer.from(expectedSignature),
-    Buffer.from(signatureHeader)
-  );
 }
 
 function getWebhookSecret(provider: string): string | null {
