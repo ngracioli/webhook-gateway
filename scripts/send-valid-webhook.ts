@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import crypto from 'node:crypto';
 
 const SECRET = process.env.TEST_WEBHOOK_SECRET ?? 'test-secret';
@@ -17,7 +18,7 @@ const signatureHex = crypto
 const signature = `sha256=${signatureHex}`;
 
 async function sendHttp() {
-  console.log('Sending webhook with details:', {
+  logger.log('Sending webhook with details:', {
     url,
     payload,
     rawBody,
@@ -44,8 +45,8 @@ async function sendHttp() {
     // ignore parse errors, keep statusLabel as 'unknown'
   }
 
-  console.log(`sent: ${statusLabel} (HTTP ${res.status})`);
-  if (res.status >= 400) console.log('response body:', text);
+  logger.log(`sent: ${statusLabel} (HTTP ${res.status})`);
+  if (res.status >= 400) logger.log('response body:', text);
 }
 
 (async () => {

@@ -1,5 +1,6 @@
 import type { WebhookEvent } from '@prisma/client';
 import type { EventRepository } from './event.repository';
+import { logger } from '@/utils/logger';
 
 type CreateEventInput = {
   provider: string;
@@ -22,6 +23,10 @@ export class EventService {
     );
 
     if (existingEvent) {
+      logger.warn('Duplicate event ingestion detected', {
+        provider: input.provider,
+        id: input.id,
+      });
       return { status: 'duplicate', event: existingEvent };
     }
 

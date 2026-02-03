@@ -1,6 +1,7 @@
 import { Elysia } from 'elysia';
-import { webhookController } from '@/webhooks/webhook.controller';
 import { startEventProcessor } from '@/infra/event-processor';
+import { logger } from '@/utils/logger';
+import { webhookController } from '@/webhooks/webhook.controller';
 
 const app = new Elysia();
 
@@ -10,4 +11,4 @@ startEventProcessor();
 
 app.listen(3000);
 
-console.log('Server is running on http://localhost:3000');
+logger.log('Server is running on http://localhost:3000');

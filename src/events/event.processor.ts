@@ -1,5 +1,6 @@
 import { EventStatus, type WebhookEvent } from '@prisma/client';
 import { prisma } from '@/infra/prisma';
+import { logger } from '@/utils/logger';
 import type { EventRepository } from './event.repository';
 
 export class EventProcessor {
@@ -24,7 +25,7 @@ export class EventProcessor {
         id: event.id,
       });
 
-      console.log(
+      logger.info(
         `Processing event (noop): ${event.provider}:${event.id} ${event.eventType}`
       );
 
@@ -33,7 +34,7 @@ export class EventProcessor {
         id: event.id,
       });
 
-      console.log(`Event processed: ${event.provider}:${event.id}`);
+      logger.info(`Event processed: ${event.provider}:${event.id}`);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
@@ -45,7 +46,7 @@ export class EventProcessor {
         errorMessage
       );
 
-      console.error(`Event failed: ${event.provider}:${event.id}`, error);
+      logger.error(`Event failed: ${event.provider}:${event.id}`, error);
     }
   }
 }

@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { logger } from '@/utils/logger';
 
 type ValidateSignatureInput = {
   provider: string;
@@ -10,7 +11,7 @@ export function validateSignature(input: ValidateSignatureInput): boolean {
   const secret = getWebhookSecret(input.provider);
   const signature = input.signature ?? null;
 
-  console.log('Validating signature (require sha256= prefix):', {
+  logger.log('Validating signature (require sha256= prefix):', {
     provider: input.provider,
     signatureProvided: !!signature,
     secretExists: !!secret,
