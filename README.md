@@ -1,9 +1,5 @@
 # Webhook Gateway
 
-![Status: Production-ready](https://img.shields.io/badge/status-production--ready-brightgreen)
-![Language: TypeScript](https://img.shields.io/badge/language-Typescript-blue)
-![Runtime: Bun](https://img.shields.io/badge/runtime-Bun-00A4EF)
-
 Secure, production-oriented webhook ingestion gateway built with Bun, Elysia and Prisma. Designed to receive, validate, persist, and asynchronously process webhooks from third-party providers while providing strict idempotency, concise acknowledgements, and robust failure handling.
 
 ---
